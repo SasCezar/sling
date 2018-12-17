@@ -1,4 +1,5 @@
-#/bin/bash
+#!/usr/bin/env bash
+
 #
 # Copyright 2018 Google Inc.
 #
@@ -27,58 +28,58 @@
 
 set -e
 
-ONTONOTES=local/data/corpora/ontonotes
-pushd $ONTONOTES
-
-echo "Check that OntoNotes 5 corpus is present"
-if [ -f "LDC2013T19.tar.gz" ] ; then
-  echo "OntoNotes 5 corpus present"
-else
-  echo "OntoNotes 5 corpus not found"
-  echo "OntoNotes 5 can be obtained from LDC if you have a LDC license"
-  echo "See: https://catalog.ldc.upenn.edu/LDC2013T19"
-  exit 1
-fi
-
-echo "Unpack OntoNotes 5"
-tar -xf LDC2013T19.tar.gz
-
-echo "Download and unpack the CoNLL formated OntoNotes 5 data"
-wget https://github.com/ontonotes/conll-formatted-ontonotes-5.0/archive/v12.tar.gz
-tar -xf v12.tar.gz --strip-components=1
-
-wget -O train.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-train-document-ids.txt
-wget -O dev.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-development-document-ids.txt
-wget -O test.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-test-document-ids.txt
-
-wget http://ontonotes.cemantix.org/download/conll-formatted-ontonotes-5.0-scripts.tar.gz
-tar -xf conll-formatted-ontonotes-5.0-scripts.tar.gz
-
-echo "Generate CoNLL files"
-./conll-formatted-ontonotes-5.0/scripts/skeleton2conll.sh -D ontonotes-release-5.0/data/files/data/ conll-formatted-ontonotes-5.0/
-
-popd
+ONTONOTES=~/WikiSRL/data/CoNLL2009to2012
+#pushd $ONTONOTES
+#
+#echo "Check that OntoNotes 5 corpus is present"
+#if [ -f "LDC2013T19.tar.gz" ] ; then
+#  echo "OntoNotes 5 corpus present"
+#else
+#  echo "OntoNotes 5 corpus not found"
+#  echo "OntoNotes 5 can be obtained from LDC if you have a LDC license"
+#  echo "See: https://catalog.ldc.upenn.edu/LDC2013T19"
+#  exit 1
+#fi
+#
+#echo "Unpack OntoNotes 5"
+#tar -xf LDC2013T19.tar.gz
+#
+#echo "Download and unpack the CoNLL formated OntoNotes 5 data"
+#wget https://github.com/ontonotes/conll-formatted-ontonotes-5.0/archive/v12.tar.gz
+#tar -xf v12.tar.gz --strip-components=1
+#
+#wget -O train.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-train-document-ids.txt
+#wget -O dev.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-development-document-ids.txt
+#wget -O test.ids http://ontonotes.cemantix.org/download/english-ontonotes-5.0-test-document-ids.txt
+#
+#wget http://ontonotes.cemantix.org/download/conll-formatted-ontonotes-5.0-scripts.tar.gz
+#tar -xf conll-formatted-ontonotes-5.0-scripts.tar.gz
+#
+#echo "Generate CoNLL files"
+#./conll-formatted-ontonotes-5.0/scripts/skeleton2conll.sh -D ontonotes-release-5.0/data/files/data/ conll-formatted-ontonotes-5.0/
+#
+#popdcd
 
 echo "Convert CoNLL files to SLING"
 
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
-IN=$ONTONOTES/conll-formatted-ontonotes-5.0/data
-OUT=local/data/corpora/caspar
+IN=$ONTONOTES/CoNLL2009-ST-English2012
+OUT=~/WikiSRL/data/sling_frame/CoNLL2009-ST-English2012
 
 mkdir -p $OUT
 
 python $CONVERTER \
-  --input=$IN/train/data/english/annotations/ \
+  --input=$IN/ \
   --allowed_ids=$ONTONOTES/train.ids \
   --output=$OUT/train.rec
 
 python $CONVERTER \
-  --input=$IN/development/data/english/annotations/ \
+  --input=$IN/ \
   --allowed_ids=$ONTONOTES/dev.ids \
   --output=$OUT/dev.rec
 
 python $CONVERTER \
-  --input=$IN/test/data/english/annotations/ \
+  --input=$IN/ \
   --allowed_ids=$ONTONOTES/test.ids \
   --output=$OUT/test.rec
 
