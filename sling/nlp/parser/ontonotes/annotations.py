@@ -1199,7 +1199,8 @@ class Annotations:
       self._add_noun_phrases()
 
     # Normalize all spans.
-    self._normalize()
+    # TODO Check if good to remove
+    # self._normalize()
 
     mentions = Mentions(document)
 

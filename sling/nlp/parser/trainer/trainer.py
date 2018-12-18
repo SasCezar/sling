@@ -306,6 +306,7 @@ class Trainer:
     for document in corpora:
       if self.count >= self.hparams.num_examples:
         break
+      print document
       self.process(document)
 
     # Process the partial batch (if any) at the end, and evaluate one last time.
