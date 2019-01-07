@@ -405,10 +405,9 @@ class Converter:
 def file_allowed(allowed_ids, filename):
   if len(allowed_ids) == 0:
     return True
-  # _, sep, suffix = filename.partition('data/english/annotations')
-  # filename = sep + suffix
-  print filename
-  return any([filename in allowed for allowed in allowed_ids])
+  _, sep, suffix = filename.partition('data/english/annotations')
+  filename = sep + suffix
+  return filename in allowed_ids
 
 
 if __name__ == "__main__":
@@ -486,7 +485,7 @@ if __name__ == "__main__":
           line += '.gold_conll'
         allowed_ids.add(line)
     print len(allowed_ids), "allowed filenames read"
-  print allowed_ids
+
   # Convert each file in the specified folder.
   summary = Summary()
   converter = Converter(commons, summary, options, schema)
@@ -496,11 +495,11 @@ if __name__ == "__main__":
         break
 
       if filename.endswith(".gold_conll"):
-        # fullname = os.path.join(root, filename)
-        if not file_allowed(allowed_ids, filename):
+        fullname = os.path.join(root, filename)
+        if not file_allowed(allowed_ids, fullname):
           summary.input.files_skipped.increment()
           continue
-        fullname = os.path.join(root, filename)
+
         documents = converter.tosling(fullname)
         for i, document in enumerate(documents):
           docid = document.frame["/ontonotes/docid"]
@@ -518,4 +517,3 @@ if __name__ == "__main__":
       f.write("CONVERSION SUMMARY\n\n")
       f.write(summary_str)
     print "Summary written to", flags.arg.summary
-
