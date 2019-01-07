@@ -213,7 +213,11 @@ BreakType TokenizerText::BreakLevel(int index) const {
   }
   if (flags & TOKEN_EOS) return SENTENCE_BREAK;
   if (flags & TOKEN_LINE) return LINE_BREAK;
-  if (flags & TOKEN_DISCARD) return SPACE_BREAK;
+  if (flags & TOKEN_DISCARD) {
+    // Do not insert space break for zero-width space.
+    return elements_[index].ch == 0x200B ? NO_BREAK : SPACE_BREAK;
+  }
+
   return NO_BREAK;
 }
 
@@ -487,7 +491,8 @@ static const char *kBreakingTags[] = {
   "h1", "/h1", "h2", "/h2", "h3", "/h3", "h4", "/h4", "h5",
   "/h5", "h6", "/h6", "hr", "li", "noframes", "/noframes", "ol",
   "/ol", "option", "/option", "p", "/p", "select", "/select",
-  "table", "/table", "/title", "tr", "/tr", "ul", "/ul", nullptr
+  "table", "/table", "/title", "tr", "/tr", "ul", "/ul",
+  "blockquote", "/blockquote", nullptr
 };
 
 static const char *kTokenSuffixes[] = {
@@ -533,8 +538,8 @@ static const char *kAbbreviations[] = {
   "a.", "abb.", "abg.", "abs.", "abt.", "ac.", "acad.", "acc.", "adm.",
   "admin.", "adopt.", "adr.", "ads.", "adv.", "af.", "ag.", "ala.", "alm.",
   "alt.", "amer.", "amex.", "ann.", "ans.", "ap.", "app.", "appl.", "approx.",
-  "apr.", "apt.", "arch.", "ark.", "ariz.", "art.", "assoc.", "asst.", "aufl.",
-  "aug.", "auto.", "av.", "ave.", "avg.",
+  "apr.", "apt.", "arch.", "ark.", "ariz.", "art.", "assoc.", "asst.", "atty.",
+  "aufl.", "aug.", "auto.", "av.", "ave.", "avg.",
 
   "b.", "bc.", "bd.", "biochem.", "biol.", "bl.", "bldg.", "blvd.", "br.",
   "bros.", "bzw.",
@@ -587,7 +592,7 @@ static const char *kAbbreviations[] = {
   "pgs.", "ph.", "phil.", "php.", "phys.", "pic.", "plc.", "pol.", "pop.",
   "pos.", "pot.", "pp.", "pr.", "preg.", "pres.", "prev.", "priv.", "pro.",
   "proc.", "prof.", "prog.", "prov.", "ps.", "psa.", "pt.", "pub.", "publ.",
-  "pvt.", "ph.d.",
+  "pvt.",
 
   "q.",
 
@@ -619,9 +624,10 @@ static const char *kAbbreviations[] = {
   "mon.", "tue.", "wed.", "thu.", "fri.", "sat.", "sun.",
 
   // Compound abbreviations.
-  "a.c.", "a.d.", "a.k.a.", "a.m.", "c.e.", "cont'd.", "d.c.", "e.g.", "f.a.o.",
-  "g.m.b.h.", "i.b.m.", "i.e.", "l.a.", "m.a.", "m.b.a.", "m.d.", "n.y.",
-  "p.m.", "p.r.", "u.k.", "u.n.", "u.s.a.", "u.s.s.r.", "u.s.",
+  "a.c.", "a.d.", "a.k.a.", "a.m.", "b.sc.", "c.e.", "cont'd.", "d.c.", "d.sc.",
+  "dr.sc.", "e.g.", "f.a.o.", "g.m.b.h.", "i.b.m.", "i.e.", "l.a.", "m.a.",
+  "m.b.a.", "m.d.", "m.sc.", "n.y.", "ph.d.", "p.m.", "p.r.", "u.k.", "u.n.",
+  "u.s.a.", "u.s.s.r.", "u.s.",
 
   // Special words.
   "c++", "yahoo!", ".net", "google+",
@@ -702,11 +708,12 @@ void StandardTokenization::Init(CharacterFlags *char_flags) {
   char_flags->add('<', TAG_START);
   char_flags->add('>', TAG_END);
   char_flags->add('@', WORD_PUNCT);
-  char_flags->add('_', WORD_PUNCT);
+  char_flags->add('_', CHAR_LETTER);
   char_flags->add('`', WORD_PUNCT);
   char_flags->add(0x2019, WORD_PUNCT);  // ’ (single quote).
-  char_flags->add('@', HASHTAG_START);  // For @handle
-  char_flags->add('#', HASHTAG_START);  // For #tags
+  char_flags->add('@', HASHTAG_START);  // for @handle
+  char_flags->add('#', HASHTAG_START);  // for #tags
+  char_flags->add(0x200B, TOKEN_DISCARD);  // zero-width space
 
   // Space tokens.
   AddTokenType(" ", TOKEN_DISCARD);
@@ -732,20 +739,21 @@ void StandardTokenization::Init(CharacterFlags *char_flags) {
   AddTokenType(",", 0);
   AddTokenType("!", TOKEN_CONDEOS);
   AddTokenType("?", TOKEN_CONDEOS);
-  AddTokenType(";", TOKEN_CONDEOS);
-  AddTokenType(":", TOKEN_CONDEOS);
+  AddTokenType(";", 0);
+  AddTokenType(":", 0);
   AddTokenType("|", TOKEN_EOS | TOKEN_DISCARD);
   AddTokenType(" * ", TOKEN_EOS | TOKEN_PARA | TOKEN_DISCARD);  // ASCII bullet
   AddTokenType("·", TOKEN_EOS | TOKEN_PARA | TOKEN_DISCARD);  // middle dot
-  AddTokenType("_", TOKEN_CONDEOS, "--");
   AddTokenType("...", TOKEN_CONDEOS);
   AddTokenType("…", TOKEN_CONDEOS, "...");
-  AddTokenType("&", TOKEN_CONDEOS, "&");
+  AddTokenType("&", 0, "&");
   AddTokenType(". . .", TOKEN_CONDEOS, "...");
-  AddTokenType("--", TOKEN_CONDEOS);
-  AddTokenType("---", TOKEN_CONDEOS, "--");
-  AddTokenType("—", TOKEN_CONDEOS, "--");  // em dash
-  AddTokenType("–", TOKEN_CONDEOS, "--");  // en dash
+  AddTokenType("--", 0);
+  AddTokenType("---", 0, "--");
+  AddTokenType("‒", 0, "--");  // U+2012 figure dash
+  AddTokenType("–", 0, "--");  // U+2013 en dash
+  AddTokenType("—", 0, "--");  // U+2014 em dash
+  AddTokenType("−", 0, "--");  // U+2212 minus sign
   AddTokenType("\"", TOKEN_QUOTE);
   AddTokenType("＂", TOKEN_QUOTE);
   AddTokenType("，", 0, ",");
