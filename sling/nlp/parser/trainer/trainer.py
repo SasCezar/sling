@@ -58,14 +58,14 @@ def dev_accuracy(dev_path, tmp_folder, caspar):
   writer.close()
   end_time = time.time()
   print "Annotated", count, "documents in", "%.1f" % (end_time - start_time), \
-      "seconds", now(), mem()
+    "seconds", now(), mem()
   print "Disallowed/Total leaf actions for", cascade.__class__.__name__
   for i, c in enumerate(dev_disallowed):
     print "Delegate", i, "disallowed", c, "out of", dev_total[i]
 
   return utils.frame_evaluation(gold_corpus_path=dev_path, \
-                                test_corpus_path=test_path, \
-                                commons=caspar.spec.commons)
+    test_corpus_path=test_path, \
+    commons=caspar.spec.commons)
 
 
 # Training hyperparameters.
@@ -116,9 +116,9 @@ class Trainer:
         nesterov=False)
     elif hyperparams.optimizer == "adam":
       self.optimizer = torch.optim.Adam(
-          caspar.parameters(), lr=hyperparams.alpha, weight_decay=0, \
-              betas=(hyperparams.adam_beta1, hyperparams.adam_beta2), \
-              eps=hyperparams.adam_eps)
+        caspar.parameters(), lr=hyperparams.alpha, weight_decay=0, \
+        betas=(hyperparams.adam_beta1, hyperparams.adam_beta2), \
+        eps=hyperparams.adam_eps)
     else:
       raise ValueError('Unknown learning method: %r' % hyperparams.optimizer)
 
@@ -161,7 +161,7 @@ class Trainer:
     loss_dict["num_examples_seen"] = self.count
     loss_dict["num_batches_seen"] = self.count / self.hparams.batch_size
     self.saved_losses.append(loss_dict)
-    
+
 
   # Processes a single given example.
   def process(self, example):
@@ -243,9 +243,9 @@ class Trainer:
             self.averages[name].sub_(diff)
 
       print "BatchLoss after", "(%d" % num_batches, \
-          "batches =", self.count, "examples):", value, \
-          " incl. L2=", fstr(l2 / 3.0), \
-          "(%.1f" % (end - start), "secs)", now(), mem()
+        "batches =", self.count, "examples):", value, \
+        " incl. L2=", fstr(l2 / 3.0), \
+        "(%.1f" % (end - start), "secs)", now(), mem()
 
 
   # Swaps model parameters with their moving average counterparts.
@@ -306,12 +306,8 @@ class Trainer:
     for document in corpora:
       if self.count >= self.hparams.num_examples:
         break
-      print document
       self.process(document)
 
     # Process the partial batch (if any) at the end, and evaluate one last time.
     self.update()
     self.evaluate()
-
-
-
