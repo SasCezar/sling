@@ -19,6 +19,7 @@
 import re
 import sling
 
+
 # Represents a span/token/constituent.
 class Span:
   def __init__(self, begin, label):
@@ -32,8 +33,8 @@ class Span:
     self.brk = sling.SPACE_BREAK
 
     # Only for constituency spans.
-    self.parent = None   # parent span
-    self.children = []   # children spans in left->right order
+    self.parent = None  # parent span
+    self.children = []  # children spans in left->right order
 
     # Only true for SRL predicate spans.
     self.predicate = False
@@ -180,7 +181,7 @@ class Mentions:
 # Stores the end token of the spans.
 class SpanEnds:
   def __init__(self, size):
-    self.end = [False] * size   # i -> whether a span ends at i
+    self.end = [False] * size  # i -> whether a span ends at i
 
   # Add an end token.
   def add(self, end):
@@ -331,11 +332,11 @@ class Annotations:
       if beginning and ending:  # e.g. (PERSON)
         label = ner[1:-1]
         self.ner.singleton(token_index, label)
-      elif beginning:           # e.g. (TIME*
+      elif beginning:  # e.g. (TIME*
         assert ner[-1] == '*'
         label = ner[1:-1]
         self.ner.start(token_index, label)
-      else:                     # e.g. *)
+      else:  # e.g. *)
         assert ending
         assert ner == '*)'
         self.ner.finish(token_index + 1)
@@ -352,9 +353,9 @@ class Annotations:
             cluster_id = int(coref_field[1:-1])  # e.g. (8)
             self.coref.singleton(token_index, cluster_id)
           elif beginning:
-            cluster_id = int(coref_field[1:])    # e.g. (8
+            cluster_id = int(coref_field[1:])  # e.g. (8
             self.coref.start(token_index, cluster_id)
-          else:                                  # e.g. 8)
+          else:  # e.g. 8)
             assert ending
             cluster_id = int(coref_field[:-1])
             self.coref.finish(token_index + 1, cluster_id)
@@ -373,18 +374,18 @@ class Annotations:
           if label == 'V':
             predicate = True
             assert fields[6] != '-'
-            label = fields[6]                # predicate prefix, e.g. 'live'
+            label = fields[6]  # predicate prefix, e.g. 'live'
             if fields[7] != "-":
-              label += "-" + fields[7]       # predicate suffix, e.g. '01'
+              label += "-" + fields[7]  # predicate suffix, e.g. '01'
           srl_annotation.singleton(token_index, '/pb/' + label)
           if predicate:
             srl_annotation.spans[-1].predicate = True
-        elif beginning:           # e.g. (ARG2*
+        elif beginning:  # e.g. (ARG2*
           assert srl[-1] == '*'
           label = srl[1:-1]
-          assert label != 'V'     # predicates can't be multi-token
+          assert label != 'V'  # predicates can't be multi-token
           srl_annotation.start(token_index, '/pb/' + label)
-        else:                     # e.g. *)
+        else:  # e.g. *)
           assert ending
           assert srl == '*)'
           srl_annotation.finish(token_index + 1)
@@ -398,7 +399,7 @@ class Annotations:
     # Spans for NER, Coref, SRL, Constituency nodes.
     self.ner = Stack()
     self.coref = Stack()
-    self.srl = []        # one stack per predicate for all processed sentences
+    self.srl = []  # one stack per predicate for all processed sentences
     self.constituents = Stack(nested=True)
     self.tokens = Stack()
 
@@ -425,7 +426,7 @@ class Annotations:
     else:
       self.sentence += 1
 
-  
+
   # Called at the end of the document. Writes the annotations to a SLING
   # document and invokes 'callback' with it.
   def _end_document(self, callback=None):
@@ -459,7 +460,7 @@ class Annotations:
       self.write(document)
       callback(document)
 
-  
+
   # Saves the current sentence's SRL annotations.
   def _save_srl_annotations(self):
     # SRL spans should be complete.
@@ -467,7 +468,7 @@ class Annotations:
       assert stack.all_ended()
     self.srl.extend(self.current_srl)
     self.current_srl = []
- 
+
 
   # Complete the children constituents array by inserting tokens:
   # - When there are holes in the token range of the parent.
@@ -494,9 +495,9 @@ class Annotations:
   # of POS tags,  then each returned phrase's tokens need to have a POS in
   # that list.
   def _split_noun_phrases(self, span, disallowed, \
-    pos_tags=['NNS', 'NN', 'NNP', 'NNPS', 'HYPH']):
+                          pos_tags=['NNS', 'NN', 'NNP', 'NNPS', 'HYPH']):
     allowed = lambda i: (disallowed is None or not disallowed[i]) and \
-      (pos_tags is None or self.pos(i) in pos_tags)
+                        (pos_tags is None or self.pos(i) in pos_tags)
 
     output = []
     begin = span.begin
@@ -561,7 +562,7 @@ class Annotations:
 
     # Sort in ascending order of constituent lengths.
     spans = [span for span in self.constituents.spans]
-    spans.sort(key=lambda s:s.length())
+    spans.sort(key=lambda s: s.length())
     norm_summary = self.summary.normalization
 
     # Get NML spans that decompose as [NML HYPH PP].
@@ -569,15 +570,15 @@ class Annotations:
       ch = span.children
       if span.label == 'NML' and len(ch) == 3 and \
         ch[0].label == 'NML' and ch[1].label == 'HYPH' and ch[2].label == 'PP':
-          self.ner.start(span.begin, self.options.backoff_type)
-          self.ner.finish(span.end)
-          added = self.ner.spans[-1]
-          example = (self.docid, self._phrase(added), self._pos_sequence(added))
-          norm_summary.nml_titles.increment(\
-            self._child_sequence(span), example=example)
-          for i in xrange(added.begin, added.end):
-            disallowed[i] = True
-        
+        self.ner.start(span.begin, self.options.backoff_type)
+        self.ner.finish(span.end)
+        added = self.ner.spans[-1]
+        example = (self.docid, self._phrase(added), self._pos_sequence(added))
+        norm_summary.nml_titles.increment( \
+          self._child_sequence(span), example=example)
+        for i in xrange(added.begin, added.end):
+          disallowed[i] = True
+
     # Get noun phrase(s) from each base NML span.
     base = {}  # NML span boundaries -> base NML or not
     for span in spans:
@@ -667,7 +668,7 @@ class Annotations:
         added = self.ner.spans[-1]
         pos_seq = ' '.join([self.pos(i) for i in xrange(begin, end)])
         example = (self.docid, \
-          self._phrase(span) + " -> " + self._phrase(added), child_seq)
+                   self._phrase(span) + " -> " + self._phrase(added), child_seq)
         norm_summary.recursive_np.increment(pos_seq, example=example)
         for i in xrange(begin, end):
           disallowed[i] = True
@@ -687,7 +688,7 @@ class Annotations:
   # (S(VP*  : S and VP spans begin here.
   # (NP*))) : NP span begins and ends here, 2 other spans end here.
   # *))))   : 4 spans end here.
-  # 
+  #
   # Beginning and ending spans are assumed to be separated by '*'.
   def _parse_constituents(self, parse_bit):
     if parse_bit == '' or parse_bit == '*' or parse_bit == '-':
@@ -746,8 +747,8 @@ class Annotations:
         if lowest is not None and \
           lowest.head == begin and tokens[begin].label in ['IN', 'TO'] and \
           (begin + 1, end) in constituents:
-            histogram = norm_summary.prep
-            begin += 1
+          histogram = norm_summary.prep
+          begin += 1
 
       if (begin, end) == original:
         break
@@ -791,7 +792,7 @@ class Annotations:
       heads[span.head] = (span, label)
     return heads
 
-  
+
   # Returns the POS sequence string for the span's token range.
   def _pos_sequence(self, span):
     seq = []
@@ -833,7 +834,7 @@ class Annotations:
           span_ends.add(span.end - 1)
         else:
           norm_summary.arguments.increment()
-    
+
     # Normalize Coref spans.
     for span in self.spans(COREF):
       if self._normalize_span(span, constituents, key="COREF", example=False):
@@ -884,7 +885,7 @@ class Annotations:
         reduced_bin = source + " (" + self.pos(span.head) + ")"
 
       example = (self.docid, self._phrase(orig_start, orig_end), \
-          self._phrase(span))
+                 self._phrase(span))
 
       if reduced_bin:
         norm_summary.reduced.increment(reduced_bin, example=example)
@@ -920,7 +921,7 @@ class Annotations:
             covered.add(t)
       for span in srl.spans:
         if span.predicate and tokens[span.begin].label.startswith('VB'):
-          i = span.end   # token index of the particle, if present
+          i = span.end  # token index of the particle, if present
           if i < end and i not in covered and tokens[i].label == 'RP':
             ends.add(span.end)
             span.end += 1
@@ -932,7 +933,7 @@ class Annotations:
       if s.end in ends and s.begin == s.end - 1:
         s.end += 1
 
- 
+
   # Summarizes CONLL annotation statistics for the current document.
   def _summarize_input(self):
     input_stats = self.summary.input
@@ -952,16 +953,17 @@ class Annotations:
     for (span, label) in self.spans(ALL, label=True):
       match = constituents.get((span.begin, span.end))
       if match is None:
-        input_stats.no_matching_constituents.increment(label,\
+        input_stats.no_matching_constituents.increment(label, \
           example=(self.docid, self._phrase(span)))
 
     # Span -> Type(s).
     span_labels = {}
     _add_label = lambda span, label: \
-        span_labels.setdefault((span.begin, span.end), []).append(label)
+      span_labels.setdefault((span.begin, span.end), []).append(label)
 
     # Records the length of 'span' in a histogram, if it is unique.
     spans = {}
+
     def _record_length(span):
       key = (span.begin, span.end)
       if key in spans:
@@ -1119,10 +1121,10 @@ class Annotations:
   # Stores a particular frame type to be evoked for a span.
   class FrameType:
     def __init__(self, span, type, refer=None):
-      self.span = (span.begin, span.end)   # span itself
-      self.type = type                     # frame type          
-      self.refer = refer                   # referring frame, only for coref
-      self.frame = None                    # if already evoked, the frame
+      self.span = (span.begin, span.end)  # span itself
+      self.type = type  # frame type
+      self.refer = refer  # referring frame, only for coref
+      self.frame = None  # if already evoked, the frame
 
 
   # Writes annotations to SLING document(s).
@@ -1199,7 +1201,6 @@ class Annotations:
       self._add_noun_phrases()
 
     # Normalize all spans.
-    # TODO Check if good to remove
     # self._normalize()
 
     mentions = Mentions(document)
@@ -1207,7 +1208,7 @@ class Annotations:
     # Span -> list of FrameType objects.
     frame_types = {}
 
-    # Adds 'type' as to the list of frame types for 'span'. 
+    # Adds 'type' as to the list of frame types for 'span'.
     def _add_type(span, type, refer=None):
       key = (span.begin, span.end)
       if key not in frame_types:
@@ -1238,7 +1239,7 @@ class Annotations:
     cluster_heads = {}
     for span in self.coref.spans:
       if span.label not in coref:
-        coref[span.label] = []   # recall that span.label is the cluster id
+        coref[span.label] = []  # recall that span.label is the cluster id
       coref[span.label].append(span)
 
     # Sort each cluster.
@@ -1254,7 +1255,7 @@ class Annotations:
           head = span
           head_type = frame_types[key][0]
           break
-      
+
       # Fallback to the first span, and use a generic type.
       if head is None:
         head = cluster[0]
@@ -1280,13 +1281,13 @@ class Annotations:
       key = (span.begin, span.end)
       assert key in frame_types
       for t in frame_types[key]:
-        if t.frame is not None: continue   # frame already evoked
+        if t.frame is not None: continue  # frame already evoked
         mention = mentions.get_or_add(span)
-        if t.refer is not None:            # refer existing frame
+        if t.refer is not None:  # refer existing frame
           assert t.refer.frame is not None, (t, t.refer)
           t.frame = t.refer.frame
           mention.evoke(t.refer.frame)
-        else:                              # evoke new frame
+        else:  # evoke new frame
           t.frame = mention.evoke_type(store[t.type])
 
     # Start making spans and evoking frames in the document.
