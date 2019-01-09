@@ -44,7 +44,8 @@ def fix_conll(in_path, out_path):
                     row[i] = row[i].replace("(A", "(ARG")
                 if row[i].startswith("(R-A"):
                     row[i] = row[i].replace("(R-A", "(R-ARG")
-
+                if row[i].startswith("(C-A"):
+                    row[i] = row[i].replace("(C-A", "(C-ARG")
 
             writer.writerow(row)
 
