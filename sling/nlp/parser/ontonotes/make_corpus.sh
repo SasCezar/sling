@@ -27,7 +27,7 @@
 
 set -e
 
-ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL
 #ONTONOTES=local/data/corpora/ontonotes
 #pushd $ONTONOTES
 #
