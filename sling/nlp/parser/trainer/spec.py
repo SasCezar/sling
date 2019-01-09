@@ -106,7 +106,7 @@ class Spec:
 
     # Fixed feature dimensionalities.
     self.oov_features = True
-    self.words_dim = 32
+    self.words_dim = 300
     self.suffixes_dim = 16
     self.fallback_dim = 8  # dimensionality of each fallback feature
     self.roles_dim = 16
@@ -435,7 +435,7 @@ class Spec:
   # Loads embeddings for words in the lexicon.
   def load_word_embeddings(self, embeddings_file):
     word_embeddings = [None] * self.words.size()
-    f = open(embeddings_file, 'rb')
+    f = open(embeddings_file, 'r')
 
     # Read header.
     header = f.readline().strip()
@@ -448,30 +448,24 @@ class Spec:
     fmt = "f" * dim
     vector_size = 4 * dim  # 4 being sizeof(float)
     oov = self.words.oov_index
-    for _ in xrange(size):
-      word = ""
-      while True:
-        ch = f.read(1)
-        if ch == " ": break
-        word += ch
+    for line in f:
+      tokens = line.split(" ")
+      word = tokens[0]
 
-      vector = list(struct.unpack(fmt, f.read(vector_size)))
-      ch = f.read(1)
-      assert ch == "\n", "%r" % ch     # end of line expected
+      vector = list(map(float, tokens[1:]))
 
       index = self.words.index(word)
       if index != oov and word_embeddings[index] is None:
         word_embeddings[index] = vector
         count += 1
 
-    f.close()
-    word_embedding_indices =\
-        [i for i, v in enumerate(word_embeddings) if v is not None]
+    word_embedding_indices = \
+      [i for i, v in enumerate(word_embeddings) if v is not None]
     word_embeddings = [v for v in word_embeddings if v is not None]
 
     print "Loaded", count, "pre-trained embeddings from file with", size, \
-        "vectors. Vectors for remaining", (self.words.size() - count), \
-        "words will be randomly initialized."
+      "vectors. Vectors for remaining", (self.words.size() - count), \
+      "words will be randomly initialized."
     return word_embeddings, word_embedding_indices
 
 
