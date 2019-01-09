@@ -40,6 +40,12 @@ def fix_conll(in_path, out_path):
                 if is_verb and i == verb_column:
                     row[i] = "(V*)"
 
+                if row[i].startswith("(A"):
+                    row[i] = row[i].replace("(A", "(ARG")
+                if row[i].startswith("(R-A"):
+                    row[i] = row[i].replace("(R-A", "(R-ARG")
+
+
             writer.writerow(row)
 
 

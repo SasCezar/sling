@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 FOLDER_IN=$1
-FOLDER_OUT=$2
 
 for filename in $FOLDER_IN/*
 do
