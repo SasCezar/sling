@@ -856,6 +856,8 @@ class Annotations:
 
       # Skip if we shouldn't normalize conjunctions.
       if lowest is not None:
+        if lowest.head is None:
+          continue
         assert lowest.head == span.head, (lowest.head, span.head)
         if lowest.is_conjunction() and not self.options.normalize_conjunctions:
           continue

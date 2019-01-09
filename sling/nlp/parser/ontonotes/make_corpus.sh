@@ -28,7 +28,7 @@
 
 set -e
 
-ONTONOTES=~/WikiSRL/data/CoNLL2009to2012
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-English/
 #pushd $ONTONOTES
 #
 #echo "Check that OntoNotes 5 corpus is present"
@@ -63,8 +63,8 @@ ONTONOTES=~/WikiSRL/data/CoNLL2009to2012
 echo "Convert CoNLL files to SLING"
 
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
-IN=$ONTONOTES/CoNLL2009-ST-English2012
-OUT=~/WikiSRL/data/sling_frame/CoNLL2009-ST-English2012
+IN=$ONTONOTES/data
+OUT=local/data/corpora/caspar
 
 mkdir -p $OUT
 
