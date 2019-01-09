@@ -848,6 +848,7 @@ class Annotations:
     spans = list(self.spans(ARG | COREF, label=True))
     spans.sort(key=lambda s: s[0].length())
 
+    skipped_spans = 0
     # Normalize spans.
     for span, source in spans:
       orig_start = span.begin
@@ -857,6 +858,7 @@ class Annotations:
       # Skip if we shouldn't normalize conjunctions.
       if lowest is not None:
         if lowest.head is None:
+          skipped_spans += 1
           continue
         assert lowest.head == span.head, (lowest.head, span.head)
         if lowest.is_conjunction() and not self.options.normalize_conjunctions:
@@ -897,6 +899,8 @@ class Annotations:
         # Couldn't normalize span with any heuristic.
         example = (example[0], example[1])
         norm_summary.none.increment(orig_end - orig_start, example=example)
+
+    print "Skipped spans:", skipped_spans, "from a total of:", len(spans)
 
     # Coref spans in the same cluster can be nested, e.g. [this [itself]].
     # After normalization, they can create duplicates, e.g. [[itself]].

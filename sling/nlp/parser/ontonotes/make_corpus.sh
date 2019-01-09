@@ -28,7 +28,7 @@
 
 set -e
 
-ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-English/
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/
 #pushd $ONTONOTES
 #
 #echo "Check that OntoNotes 5 corpus is present"
@@ -63,7 +63,7 @@ ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-English/
 echo "Convert CoNLL files to SLING"
 
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
-IN=$ONTONOTES/data
+IN=$ONTONOTES/conll-formatted-ontonotes-5.0/data
 OUT=local/data/corpora/caspar
 
 mkdir -p $OUT
@@ -71,22 +71,22 @@ mkdir -p $OUT
 python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/train.ids \
-  --output=$OUT/train.rec \
-  --doc_per_sentence \
-  --skip_coref
+  --output=$OUT/train.rec
+#  --doc_per_sentence \
+#  --skip_coref
 
 python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/dev.ids \
-  --output=$OUT/dev.rec \
-  --doc_per_sentence \
-  --skip_coref
+  --output=$OUT/dev.rec
+#  --doc_per_sentence \
+#  --skip_coref
 
 python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/test.ids \
-  --output=$OUT/test.rec \
-  --doc_per_sentence \
-  --skip_coref
+  --output=$OUT/test.rec
+#  --doc_per_sentence \
+#  --skip_coref
 
 echo "Done."
