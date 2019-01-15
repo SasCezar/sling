@@ -5,7 +5,7 @@ import sys
 
 def fix_conll(in_path, out_path):
     with open(in_path, "rt") as inf, open(out_path, "wt") as outf:
-        writer = csv.writer(outf, delimiter=" ")
+        writer = csv.writer(outf, delimiter=" ", quoting=csv.QUOTE_NONE, quotechar='')
         verb_count = 0
         for line in inf:
             is_verb = False
