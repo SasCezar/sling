@@ -474,6 +474,7 @@ if __name__ == "__main__":
 
   commons.freeze()
   writer = sling.RecordWriter(flags.arg.output)
+  txt_writer = open(str(flags.arg.output).replace(".rec", ".txt"), "wt")
 
   # Read allowed ids, if provided.
   allowed_ids = set()
@@ -503,11 +504,13 @@ if __name__ == "__main__":
         documents = converter.tosling(fullname)
         for i, document in enumerate(documents):
           docid = document.frame["/ontonotes/docid"]
+          txt_writer.write(str(document.frame) + "\n")
           writer.write(docid, document.frame.data(binary=True))
         if summary.input.files.value % 200 == 0:
           print "Processed", summary.input.files.value, "files"
 
   writer.close()
+  txt_writer.close()
   print "Wrote", summary.output.docs.value, "docs to", flags.arg.output
 
   # Write conversion summary.
