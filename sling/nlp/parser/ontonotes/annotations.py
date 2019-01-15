@@ -900,7 +900,7 @@ class Annotations:
         example = (example[0], example[1])
         norm_summary.none.increment(orig_end - orig_start, example=example)
 
-    print "Skipped spans:", skipped_spans, "from a total of:", len(spans)
+    # print "Skipped spans:", skipped_spans, "from a total of:", len(spans)
 
     # Coref spans in the same cluster can be nested, e.g. [this [itself]].
     # After normalization, they can create duplicates, e.g. [[itself]].
