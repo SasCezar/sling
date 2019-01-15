@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 #
 # Copyright 2018 Google Inc.
 #
@@ -28,7 +27,8 @@
 
 set -e
 
-ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-Spanish-edited
+#ONTONOTES=local/data/corpora/ontonotes
 #pushd $ONTONOTES
 #
 #echo "Check that OntoNotes 5 corpus is present"
@@ -58,13 +58,14 @@ ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/
 #echo "Generate CoNLL files"
 #./conll-formatted-ontonotes-5.0/scripts/skeleton2conll.sh -D ontonotes-release-5.0/data/files/data/ conll-formatted-ontonotes-5.0/
 #
-#popdcd
-
+#popd
+#
 echo "Convert CoNLL files to SLING"
 
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
-IN=$ONTONOTES/conll-formatted-ontonotes-5.0/data
-OUT=local/data/corpora/caspar
+#IN=$ONTONOTES/conll-formatted-ontonotes-5.0/data
+IN=$ONTONOTES/data
+OUT=local/data/corpora/caspar/spanish
 
 mkdir -p $OUT
 
@@ -72,21 +73,15 @@ python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/train.ids \
   --output=$OUT/train.rec
-#  --doc_per_sentence \
-#  --skip_coref
 
 python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/dev.ids \
   --output=$OUT/dev.rec
-#  --doc_per_sentence \
-#  --skip_coref
 
 python $CONVERTER \
   --input=$IN/ \
   --allowed_ids=$ONTONOTES/test.ids \
   --output=$OUT/test.rec
-#  --doc_per_sentence \
-#  --skip_coref
 
 echo "Done."
