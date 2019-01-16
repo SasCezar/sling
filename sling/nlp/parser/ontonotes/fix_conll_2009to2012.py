@@ -20,7 +20,7 @@ def fix_conll(in_path, out_path):
                 writer.writerow([])
                 continue
 
-            if row[7] != "-":
+            if row[7] != "-" and "." in row[7]:
                 row[7] = row[7].split('.')[1]
 
             if row[7] != "-":
@@ -46,7 +46,7 @@ def fix_conll(in_path, out_path):
                     row[i] = row[i].replace("(R-A", "(R-ARG")
                 if row[i].startswith("(C-A"):
                     row[i] = row[i].replace("(C-A", "(C-ARG")
-
+                row[i] = row[i].upper()
             writer.writerow(row)
 
 

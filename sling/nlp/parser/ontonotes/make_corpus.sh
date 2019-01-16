@@ -26,8 +26,9 @@
 # The OntoNotes SLING corpus will end up in local/data/corpora/caspar.
 
 set -e
-
-ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-Spanish-edited
+LANG=Catalan
+OUTL=catalan
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-$LANG
 #ONTONOTES=local/data/corpora/ontonotes
 #pushd $ONTONOTES
 #
@@ -65,7 +66,7 @@ echo "Convert CoNLL files to SLING"
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
 #IN=$ONTONOTES/conll-formatted-ontonotes-5.0/data
 IN=$ONTONOTES/data
-OUT=local/data/corpora/caspar/spanish
+OUT=local/data/corpora/caspar/$OUTL
 
 mkdir -p $OUT
 

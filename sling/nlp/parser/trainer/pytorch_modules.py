@@ -230,7 +230,6 @@ class SoftmaxLoss:
 
   def __call__(self, logits, gold_index):
     gold_var = Var(torch.LongTensor([gold_index]))
-    print "Gold index", gold_index
     return self.fn(logits, gold_var)
 
 
