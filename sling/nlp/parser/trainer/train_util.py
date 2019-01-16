@@ -29,7 +29,7 @@ def check_present(args, ls):
 
 # Evaluates gold vs test documents, which are assumed to be aligned,
 # and returns a dict of their results.
-def frame_evaluation(gold_corpus_path, test_corpus_path, commons):
+def frame_evaluation(gold_corpus_path, test_corpus_path, commons, eval_metric="SLOT_F1"):
   metrics = sling.evaluate_frames(commons, gold_corpus_path, test_corpus_path)
 
   eval_output = {}
@@ -37,7 +37,7 @@ def frame_evaluation(gold_corpus_path, test_corpus_path, commons):
     name = metric[0]
     print "Evaluation Metric: ", metric
     eval_output[name] = metric[1]
-    if name == "SLOT_F1":
+    if name == eval_metric:
       eval_output['eval_metric'] = metric
 
   assert eval_output.has_key('eval_metric'), "%r" % str(eval_output)
@@ -80,6 +80,10 @@ def setup_training_flags(flags):
                default="local/data/corpora/sempar/word2vec-32-embeddings.bin",
                type=str,
                metavar='FILE')
+  flags.define('--evaluation_metric',
+               help='(Optional) Metric used to determine the best model',
+               default="SLOT_F1",
+               type=str)
 
   # Training hyperparameters.
   # Notable omissions: decay_steps, dropout_rate.

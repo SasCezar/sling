@@ -64,7 +64,8 @@ def train(args):
   if not os.path.exists(tmp_folder):
     os.makedirs(tmp_folder)
 
-  evaluator = partial(dev_accuracy, args.dev_corpus, tmp_folder)
+  eval_metric = args.eval_metric if "eval_metric" in args else "SLOT_F1"
+  evaluator = partial(dev_accuracy, args.dev_corpus, tmp_folder, eval_metric)
 
   output_file_prefix = os.path.join(args.output_folder, "caspar")
   hyperparams = Hyperparams(args)

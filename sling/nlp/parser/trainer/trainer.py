@@ -32,7 +32,7 @@ Var = torch.autograd.Variable
 
 
 # Computes accuracy on the given dev set, using the given Caspar module.
-def dev_accuracy(dev_path, tmp_folder, caspar):
+def dev_accuracy(dev_path, tmp_folder, eval_metric, caspar):
   dev = Corpora(dev_path, caspar.spec.commons)
   print "Annotating dev documents", now(), mem()
   test_path = os.path.join(tmp_folder, "dev.annotated.rec")
@@ -64,8 +64,8 @@ def dev_accuracy(dev_path, tmp_folder, caspar):
     print "Delegate", i, "disallowed", c, "out of", dev_total[i]
 
   return utils.frame_evaluation(gold_corpus_path=dev_path, \
-    test_corpus_path=test_path, \
-    commons=caspar.spec.commons)
+    test_corpus_path=test_path, commons=caspar.spec.commons, \
+    eval_metric=eval_metric)
 
 
 # Training hyperparameters.
@@ -101,7 +101,7 @@ class Trainer:
   # Instantiates the trainer with the given model, optional evaluator,
   # and hyperparameters.
   def __init__(self, caspar, hyperparams, evaluator=None, \
-               output_file_prefix=None):
+               output_file_prefix=None)
     self.model = caspar
     self.evaluator = evaluator
     self.hparams = hyperparams
@@ -279,7 +279,7 @@ class Trainer:
             f.close()
 
           f = open(self.output_file_prefix + ".evals", "a")
-          f.write("Slot_F1 after " + str(self.count) + " examples " +
+          f.write(eval_metric + "after " + str(self.count) + " examples " +
                   str(eval_metric) + "\n")
           f.close()
 
