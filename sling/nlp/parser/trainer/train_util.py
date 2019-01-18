@@ -80,7 +80,7 @@ def setup_training_flags(flags):
                default="local/data/corpora/sempar/word2vec-32-embeddings.bin",
                type=str,
                metavar='FILE')
-  flags.define('--evaluation_metric',
+  flags.define('--eval_metric',
                help='(Optional) Metric used to determine the best model',
                default="SLOT_F1",
                type=str)

@@ -101,7 +101,7 @@ class Trainer:
   # Instantiates the trainer with the given model, optional evaluator,
   # and hyperparameters.
   def __init__(self, caspar, hyperparams, evaluator=None, \
-               output_file_prefix=None)
+               output_file_prefix=None):
     self.model = caspar
     self.evaluator = evaluator
     self.hparams = hyperparams
@@ -279,7 +279,7 @@ class Trainer:
             f.close()
 
           f = open(self.output_file_prefix + ".evals", "a")
-          f.write(eval_metric + "after " + str(self.count) + " examples " +
+          f.write(str(eval_metric) + "after " + str(self.count) + " examples " +
                   str(eval_metric) + "\n")
           f.close()
 
