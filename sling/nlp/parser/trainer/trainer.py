@@ -279,7 +279,7 @@ class Trainer:
             f.close()
 
           f = open(self.output_file_prefix + ".evals", "a")
-          f.write(str(eval_metric) + "after " + str(self.count) + " examples " +
+          f.write(eval_metric[0] + "after " + str(self.count) + " examples " +
                   str(eval_metric) + "\n")
           f.close()
 
