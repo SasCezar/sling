@@ -1,13 +1,31 @@
 import logging
 import math
+import os
+import random
 import sys
+
+
+def merge_doc_sentences(file):
+  docs = []
+  doc = ""
+  for row in file:
+    if not row.strip():
+      continue
+    if row.startswith("#task_id") and doc:
+      docs.append(doc)
+      doc = ""
+    doc += row.strip() + "\n"
+
+  return docs
 
 
 def combine(in1, in2, out):
   with open(in1, "rt", encoding="utf8") as inf1, \
     open(in2, "rt", encoding="utf8") as inf2:
     file1 = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    file1 = merge_doc_sentences(file1)
     file2 = [row.strip() for row in inf2 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    file2 = merge_doc_sentences(file2)
 
   files = [file1, file2]
   files_len = [len(file) for file in files]
@@ -17,22 +35,57 @@ def combine(in1, in2, out):
   min_len_i = files_len.index(min_len)
 
   res = []
-  n = math.floor(files_len[max_len] / files_len[min_len])
+  n = math.floor(files_len[max_len_i] / files_len[min_len_i])
+  print(n)
+  f_max = iter(files[max_len_i])
   for m in files[min_len_i]:
-    res.extend([next(files[max_len_i]) for _ in range(n - 1)])
+    res.extend([next(f_max) for _ in range(0, n)])
     res.append(m)
-  res.extend(files[max_len_i])
+  # res.extend(f_max)
 
   with open(out, "wt", encoding="utf8") as outf:
+    file = os.path.basename(out)
+    outf.write("#begin document ({});\n".format(file))
     for line in res:
-      outf.write(line)
+      if line.strip():
+        outf.write(line + "\n")
+    outf.write("#end document")
+
+
+def read_examples(file):
+  with open(file, "rt", encoding="utf8") as inf1:
+    rows = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    examples = merge_doc_sentences(rows)
+
+  return examples
+
+
+def write(examples, out):
+  with open(out, "wt", encoding="utf8") as outf:
+    file = os.path.basename(out)
+    outf.write("#begin document ({});\n".format(file))
+    for line in examples:
+      if line.strip():
+        outf.write(line + "\n")
+    outf.write("#end document")
+
+
+def random_combine(files, out):
+  examples = set()
+  for file in files:
+    examples.update(read_examples(file))
+
+  examples = list(examples)
+
+  random.shuffle(examples)
+
+  write(examples, out)
 
 
 if __name__ == '__main__':
   logging.basicConfig(format='%(asctime)s - %(module)s - %(levelname)s - %(message)s', level=logging.INFO)
   logging.info("Running %s", " ".join(sys.argv))
-  in1_path = sys.argv[1]
-  in2_path = sys.argv[2]
-  out_path = sys.argv[3]
-  combine(in1_path, in2_path, out_path)
+  out_path = sys.argv[1]
+  files = sys.argv[2:]
+  random_combine(files, out_path)
   logging.info("Completed %s", " ".join(sys.argv))
