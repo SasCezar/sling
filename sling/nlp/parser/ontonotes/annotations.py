@@ -212,7 +212,9 @@ class Annotations:
     self.converter = converter
     self.options = converter.options
     self.summary = converter.summary
-
+    self._task_id = None
+    self._lang_id = None
+    self.prev = ""
     # Current sentence index.
     self.sentence = None
 
@@ -279,14 +281,34 @@ class Annotations:
     fields = line.split()
     if len(fields) == 0:
       # Separator line between sentences.
+      self._task_id = None
+      self._lang_id = None
       return
 
+    # Read task
+    if line.startswith("#task_id:"):
+      self._task_id = line.split()[1]
+      return
+
+    if line.startswith("#lang_id:"):
+      self._lang_id = line.split()[1]
+      return
+
+    ids = [self._task_id, self._lang_id] if self._task_id and self._lang_id else []
     # Field 2: intra-sentence token index.
     token_break = sling.SPACE_BREAK
     if fields[2] == '0':  # new sentence
       if self.options.doc_per_sentence:
         self._end_document(callback)
         self._start_document()
+        # Add lang and task ids.
+        for d_id in ids:
+          token_index = len(self.tokens.spans)
+          self.tokens.singleton(token_index, label=None)
+          token = self.tokens.spans[-1]
+          token.text = d_id
+          token.label = ""
+
 
       # Set docid and part.
       self.docid = fields[0]
@@ -297,7 +319,7 @@ class Annotations:
       self._new_sentence(num_srl_predicates=len(fields) - 12)
 
     # Reset token break to NO_BREAK for the first token.
-    if len(self.tokens.spans) == 0:
+    if len(self.tokens.spans) == len(ids):
       token_break = sling.NO_BREAK
 
     # Use absolute token index instead of the intra-sentence token index.
@@ -309,7 +331,7 @@ class Annotations:
     token.brk = token_break
 
     # fields[3] = token text, fields[4] = POS.
-    token.text = fields[3]
+    token.text = fields[3].lower()
     token.label = fields[4]
 
     # fields[5] = constituency bit.
@@ -391,7 +413,7 @@ class Annotations:
           srl_annotation.finish(token_index + 1)
 
 
-  # Resets stacks for a new document.
+    # Resets stacks for a new document.
   def _start_document(self):
     self.docid = None
     self.part = None

@@ -3,7 +3,7 @@ import logging
 import sys
 
 
-def fix_conll(in_path, out_path):
+def fix_conll(in_path, out_path, task_id, lang_id):
     with open(in_path, "rt") as inf, open(out_path, "wt") as outf:
         writer = csv.writer(outf, delimiter=" ", quoting=csv.QUOTE_NONE, quotechar='')
         verb_count = 0
@@ -11,14 +11,20 @@ def fix_conll(in_path, out_path):
             is_verb = False
             verb_column = -1
             if line.startswith("#"):
-                outf.write(line.strip() + "\n")
+                outf.write(line.strip() + "\n\n")
                 continue
+
+
             row = line.split()
             n = len(row)
             if not row:
                 verb_count = 0
                 writer.writerow([])
                 continue
+
+            if row[2] == '0':
+                writer.writerow(["#task_id:", "<{}>".format(task_id)])
+                writer.writerow(["#lang_id:", "<{}>".format(lang_id)])
 
             if row[7] != "-" and "." in row[7]:
                 row[7] = row[7].split('.')[1]
@@ -38,7 +44,7 @@ def fix_conll(in_path, out_path):
                     row[i] = "*"
 
                 if is_verb and i == verb_column:
-                    row[i] = "(V*)"
+                    row[i] = "(V*)" if "V" in row[i] else "(v*)"
 
                 if row[i].startswith("(A"):
                     row[i] = row[i].replace("(A", "(ARG")
@@ -55,5 +61,7 @@ if __name__ == '__main__':
     logging.info("Running %s", " ".join(sys.argv))
     in_path = sys.argv[1]
     out_path = sys.argv[2]
-    fix_conll(in_path, out_path)
+    task_id = sys.argv[3]
+    lang_id = sys.argv[4]
+    fix_conll(in_path, out_path, task_id, lang_id)
     logging.info("Completed %s", " ".join(sys.argv))
