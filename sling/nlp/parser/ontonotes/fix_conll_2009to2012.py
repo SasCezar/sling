@@ -49,9 +49,14 @@ def fix_conll(in_path, out_path, task_id, lang_id):
                 if row[i].startswith("(A"):
                     row[i] = row[i].replace("(A", "(ARG")
                 if row[i].startswith("(R-A"):
-                    row[i] = row[i].replace("(R-A", "(R-ARG")
+                    row[i] = row[i].replace("(R-A", "(ARG")
                 if row[i].startswith("(C-A"):
-                    row[i] = row[i].replace("(C-A", "(C-ARG")
+                    row[i] = row[i].replace("(C-A", "(ARG")
+
+                if "-" in row[i]:
+                    suffix = "*)" if "*)" in row[i] else "*"
+                    row[i] = row[i].split("-")[0] + suffix
+
                 row[i] = row[i].upper()
             writer.writerow(row)
 
