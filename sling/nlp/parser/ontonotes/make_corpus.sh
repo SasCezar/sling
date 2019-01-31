@@ -26,9 +26,9 @@
 # The OntoNotes SLING corpus will end up in local/data/corpora/caspar.
 
 set -e
-LANG=Catalan
-OUTL=catalan
-ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/CoNLL2009to2012-$LANG
+LANG=$1
+OUTL=$2
+ONTONOTES=/mnt/c/Users/sasce/Documents/SRL/$LANG
 #ONTONOTES=local/data/corpora/ontonotes
 #pushd $ONTONOTES
 #

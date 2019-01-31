@@ -72,7 +72,6 @@ def write(examples, out):
 
 def random_combine(files, out):
   examples = []
-  files = [(file, int(limit)) for file, limit in zip(files[:-1:2], files[1::2])]
   print(files)
   for file, limit in files:
     ex = read_examples(file, limit)
@@ -89,5 +88,6 @@ if __name__ == '__main__':
   logging.info("Running %s", " ".join(sys.argv))
   out_path = sys.argv[1]
   files = sys.argv[2:]
+  files = [(file, int(limit)) for file, limit in zip(files[:-1:2], files[1::2])]
   random_combine(files, out_path)
   logging.info("Completed %s", " ".join(sys.argv))
