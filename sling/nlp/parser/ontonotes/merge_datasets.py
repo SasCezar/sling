@@ -52,12 +52,12 @@ def combine(in1, in2, out):
     outf.write("#end document")
 
 
-def read_examples(file):
+def read_examples(file, limit):
   with open(file, "rt", encoding="utf8") as inf1:
     rows = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
     examples = merge_doc_sentences(rows)
 
-  return examples
+  return examples[:limit]
 
 
 def write(examples, out):
@@ -71,11 +71,13 @@ def write(examples, out):
 
 
 def random_combine(files, out):
-  examples = set()
-  for file in files:
-    examples.update(read_examples(file))
-
-  examples = list(examples)
+  examples = []
+  files = [(file, int(limit)) for file, limit in zip(files[:-1:2], files[1::2])]
+  print(files)
+  for file, limit in files:
+    ex = read_examples(file, limit)
+    assert len(ex) == limit, "{} - {}".format(len(ex), limit)
+    examples.extend(ex)
 
   random.shuffle(examples)
 
