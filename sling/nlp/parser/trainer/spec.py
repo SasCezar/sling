@@ -438,16 +438,8 @@ class Spec:
     word_embeddings = [None] * self.words.size()
     f = open(embeddings_file, 'r')
 
-    # Read header.
-    header = f.readline().strip()
-    size = int(header.split()[0])
-    dim = int(header.split()[1])
-    assert dim == self.words_dim, "%r vs %r" % (dim, self.words_dim)
-
     # Read vectors for known words.
     count = 0
-    fmt = "f" * dim
-    vector_size = 4 * dim  # 4 being sizeof(float)
     oov = self.words.oov_index
     for line in f:
       tokens = line.split(" ")
@@ -464,6 +456,7 @@ class Spec:
         [i for i, v in enumerate(word_embeddings) if v is not None]
     word_embeddings = [v for v in word_embeddings if v is not None]
 
+    size = len(word_embeddings)
     print "Loaded", count, "pre-trained embeddings from file with", size, \
         "vectors. Vectors for remaining", (self.words.size() - count), \
         "words will be randomly initialized."
