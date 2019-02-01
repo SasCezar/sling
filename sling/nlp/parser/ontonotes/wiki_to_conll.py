@@ -64,7 +64,7 @@ def create_list(label, positions, n):
   return res
 
 
-LIMIT = 50000
+LIMIT = 5000
 
 
 def wiki_to_conll(in_path, out_path, task_id, lang_id):
@@ -83,7 +83,7 @@ def wiki_to_conll(in_path, out_path, task_id, lang_id):
       line_number += 1
       if (line_number % 100) == 0:
         logging.info("Processed {} lines".format(line_number))
-      if line_number - skipped == LIMIT:
+      if LIMIT and line_number - skipped == LIMIT + 1:
         outf.write("\r\n#end document\r\n")
         break
 
@@ -137,7 +137,7 @@ def wiki_to_conll(in_path, out_path, task_id, lang_id):
       for k in zip(filename, zeros, i, tokens, pos, dummy, verb, dummy, dummy, dummy, ["*"] * n, features, dummy):
         writer.writerow(k)
 
-    outf.write("\r\n#end document\r\n") if line_number - skipped != LIMIT else None
+    outf.write("\r\n#end document\r\n") if line_number - skipped != LIMIT + 1 else None
   logging.info("Skipped: {} lines".format(skipped))
   logging.info("Words: {}".format(len(words)))
 
@@ -152,5 +152,5 @@ if __name__ == '__main__':
   # wiki_to_conll(in_path, out_path, task_id, lang_id)
   logging.info("Completed %s", " ".join(sys.argv))
 
-LANG = "EN"
+LANG = "ES"
 wiki_to_conll("{}_srl.json".format(LANG.lower()), "wiki_srl_{}.gold_conll".format(LANG.lower()), "WikiSRL", LANG)
