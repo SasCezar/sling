@@ -64,7 +64,7 @@ def create_list(label, positions, n):
   return res
 
 
-LIMIT = 5000
+LIMIT = 0
 
 
 def wiki_to_conll(in_path, out_path, task_id, lang_id):
@@ -152,5 +152,5 @@ if __name__ == '__main__':
   # wiki_to_conll(in_path, out_path, task_id, lang_id)
   logging.info("Completed %s", " ".join(sys.argv))
 
-LANG = "ES"
+LANG = "DE"
 wiki_to_conll("{}_srl.json".format(LANG.lower()), "wiki_srl_{}.gold_conll".format(LANG.lower()), "WikiSRL", LANG)

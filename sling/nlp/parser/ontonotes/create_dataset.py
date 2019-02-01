@@ -1,66 +1,49 @@
 import json
 import logging
+import os
 import sys
 from itertools import chain
-from os import listdir
-from os.path import isfile, join
+from os.path import join
 from shutil import copyfile
 
-from nlp.parser.ontonotes import experiments
-from nlp.parser.ontonotes.merge_datasets import random_combine
+import experiments
+from merge_datasets import random_combine
 
 
 def load_experiment_config(path):
-  with open(path, "r") as inf:
+  with open(path, "rt", encoding="utf8") as inf:
     configs = json.load(inf)
 
   return configs
 
 
-train_strings = ["train"]
-dev_strings = ["development"]
-test_strings = ["test", "evaluation"]
-
-
-def filter_file(files, strings, langs):
-  return [f for f in files if any([True for s in strings if s in f]) and any([True for s in langs if s in f])]
-
-
-def load_files(in_path, source_langs, target_lang):
-  files = [f for f in listdir(in_path) if isfile(join(in_path, f))]
-  training = filter_file(files, train_strings, source_langs)
-  dev = filter_file(files, dev_strings, target_lang)
-  test = filter_file(files, test_strings, target_lang)
-
-  return training, dev, test
-
-
-def write_ids(out_path, set_name, files):
-  with open(join(out_path, set_name + ".ids"), "w") as outf:
+def write_ids(out_path, filename, files):
+  with open(join(out_path, filename), "wt", encoding="utf8") as outf:
     for f in files:
       outf.write("/".join(["data", "english", "annotations", f]) + "\n")
 
 
 def create_ids_files(out_path, training, dev, test):
-  write_ids(out_path, "train", training)
-  write_ids(out_path, "dev", dev)
-  write_ids(out_path, "test", test)
+  write_ids(out_path, "train.ids", training)
+  write_ids(out_path, "dev.ids", dev)
+  write_ids(out_path, "test.ids", test)
 
 
-def create_dataset(in_path, out_path, experiment_name, config):
-  # training, dev, test = load_files(in_path, config['source_langs'], config['target_lang'])
-  training = config[experiment_name]['training']
-  dev = config[experiment_name]['dev']
-  test = config[experiment_name]['test']
+def create_dataset(in_path, out_path, config):
+  training = [(join(in_path, f), k) for f, k in config['train']]
+  dev = config['dev']
+  test = config['test']
 
   data_path = join(*[out_path, "data", "english", "annotations"])
+  if not os.path.exists(data_path):
+    os.makedirs(data_path)
 
   training_file = "train.gold_conll"
   random_combine(training, join(data_path, training_file))
 
-  create_ids_files(out_path, training_file, dev, test)
+  create_ids_files(out_path, [training_file], dev, test)
 
-  for f in chain(dev, test):
+  for f in chain(dev,test):
     src = join(in_path, f)
     dst = join(data_path, f)
 
@@ -71,9 +54,14 @@ if __name__ == '__main__':
   logging.basicConfig(format='%(asctime)s - %(module)s - %(levelname)s - %(message)s', level=logging.INFO)
   logging.info("Running %s", " ".join(sys.argv))
   in_path = sys.argv[1]
+  print(in_path)
   out_path = sys.argv[2]
   experiment_name = sys.argv[3]
+  out_path = join(out_path, experiment_name)
 
-  create_dataset(in_path, out_path, experiment_name, experiments.EXPERIMENTS[experiment_name])
+  if not os.path.exists(out_path):
+    os.makedirs(out_path)
+
+  create_dataset(in_path, out_path, experiments.EXPERIMENTS[experiment_name])
 
   logging.info("Completed %s", " ".join(sys.argv))

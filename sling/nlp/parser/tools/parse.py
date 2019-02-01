@@ -65,9 +65,9 @@ def run(args):
       trace.write()
     writer.write(str(count), state.encoded())
     store = sling.Store(commons)
-    doc = sling.Document(store.parse(state.encoded), store, docschema)
+    doc = sling.Document(store.parse(state.encoded()), store, docschema)
 
-    txt_writer.write(str(doc.frame()) + "\n")
+    txt_writer.write(str(doc.frame) + "\n")
     count += 1
     if count % 100 == 0:
       print "Annotated", count, "documents", now(), mem()
