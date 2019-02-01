@@ -50,8 +50,13 @@ def run(args):
   caspar = Caspar(spec)
   caspar.from_flow(flow)
 
+  commons = sling.Store()
+  docschema = sling.DocumentSchema(commons)
+  commons.freeze()
+
   corpus = Corpora(args.input, caspar.spec.commons)
   writer = sling.RecordWriter(args.output)
+  txt_writer = open(str(args.output).replace(".rec", ".txt"), "wt")
   count = 0
   for document in corpus:
     state, _, _, trace = caspar.forward(document, train=False, debug=args.trace)
@@ -59,10 +64,15 @@ def run(args):
     if trace:
       trace.write()
     writer.write(str(count), state.encoded())
+    store = sling.Store(commons)
+    doc = sling.Document(store.parse(state.encoded), store, docschema)
+
+    txt_writer.write(str(doc.frame()) + "\n")
     count += 1
     if count % 100 == 0:
       print "Annotated", count, "documents", now(), mem()
   writer.close()
+  txt_writer.close()
   print "Annotated", count, "documents", now(), mem()
   print "Wrote annotated documents to", args.output
 
