@@ -22,9 +22,9 @@ def merge_doc_sentences(file):
 def combine(in1, in2, out):
   with open(in1, "rt", encoding="utf8") as inf1, \
     open(in2, "rt", encoding="utf8") as inf2:
-    file1 = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    file1 = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end"))]
     file1 = merge_doc_sentences(file1)
-    file2 = [row.strip() for row in inf2 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    file2 = [row.strip() for row in inf2 if not (row.startswith("#begin") or row.startswith("#end"))]
     file2 = merge_doc_sentences(file2)
 
   files = [file1, file2]
@@ -54,7 +54,7 @@ def combine(in1, in2, out):
 
 def read_examples(file, limit):
   with open(file, "rt", encoding="utf8") as inf1:
-    rows = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end")) or row.strip()]
+    rows = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end"))]
     examples = merge_doc_sentences(rows)
 
   return examples[:limit]
