@@ -153,7 +153,7 @@ EXPERIMENTS = {
   },
 
   "de_wiki_5000_conll_0": {
-    "train": [("wiki_srl_es.gold_conll", 5000)],
+    "train": [("wiki_srl_de.gold_conll", 5000)],
     "dev": ["CoNLL2009-ST-German-development.gold_conll"],
     "test": ["CoNLL2009-ST-German-trial.gold_conll"]
   },
