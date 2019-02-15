@@ -39,7 +39,7 @@ def create_dataset(in_path, out_path, config, one_doc):
     os.makedirs(data_path)
 
   training_file = "train.gold_conll"
-  random_combine(training, join(data_path, training_file))
+  random_combine(training, join(data_path, training_file), one_doc)
 
   create_ids_files(out_path, [training_file], dev, test)
 
