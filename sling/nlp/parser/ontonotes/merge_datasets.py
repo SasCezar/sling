@@ -68,8 +68,8 @@ def write(examples, out, one_doc_sentence=False):
     for line in examples:
       outf.write("#begin document ({}_{});\n".format(file, str(i).zfill(4))) if one_doc_sentence else None
       if line.strip():
-        outf.write(line + "\n")
-      outf.write("#end document\n") if one_doc_sentence else None
+        outf.write(line.strip() + "\n")
+      outf.write("#end document\n\n") if one_doc_sentence else None
       i += 1
     outf.write("#end document\n") if not one_doc_sentence else None
 
