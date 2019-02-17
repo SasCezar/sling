@@ -29,7 +29,7 @@ def create_ids_files(out_path, training, dev, test):
   write_ids(out_path, "test.ids", test)
 
 
-def create_dataset(in_path, out_path, config):
+def create_dataset(in_path, out_path, config, one_doc):
   training = [(join(in_path, f), k) for f, k in config['train']]
   dev = config['dev']
   test = config['test']
@@ -39,7 +39,7 @@ def create_dataset(in_path, out_path, config):
     os.makedirs(data_path)
 
   training_file = "train.gold_conll"
-  random_combine(training, join(data_path, training_file))
+  random_combine(training, join(data_path, training_file), one_doc)
 
   create_ids_files(out_path, [training_file], dev, test)
 
@@ -57,11 +57,12 @@ if __name__ == '__main__':
   print(in_path)
   out_path = sys.argv[2]
   experiment_name = sys.argv[3]
+  one_doc = True if len(sys.argv) > 4 else False
   out_path = join(out_path, experiment_name)
 
   if not os.path.exists(out_path):
     os.makedirs(out_path)
 
-  create_dataset(in_path, out_path, experiments.EXPERIMENTS[experiment_name])
+  create_dataset(in_path, out_path, experiments.EXPERIMENTS[experiment_name], one_doc)
 
   logging.info("Completed %s", " ".join(sys.argv))

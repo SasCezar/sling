@@ -60,17 +60,21 @@ def read_examples(file, limit):
   return examples[:limit]
 
 
-def write(examples, out):
+def write(examples, out, one_doc_sentence=False):
   with open(out, "wt", encoding="utf8") as outf:
     file = os.path.basename(out)
-    outf.write("#begin document ({});\n".format(file))
+    outf.write("#begin document ({});\n".format(file)) if not one_doc_sentence else None
+    i = 0
     for line in examples:
+      outf.write("#begin document ({}_{});\n".format(file, str(i).zfill(4))) if one_doc_sentence else None
       if line.strip():
-        outf.write(line + "\n")
-    outf.write("#end document")
+        outf.write(line.strip() + "\n")
+      outf.write("#end document\n\n") if one_doc_sentence else None
+      i += 1
+    outf.write("#end document\n") if not one_doc_sentence else None
 
 
-def random_combine(files, out):
+def random_combine(files, out, one_doc):
   examples = []
   print(files)
   for file, limit in files:
@@ -80,14 +84,15 @@ def random_combine(files, out):
 
   random.shuffle(examples)
 
-  write(examples, out)
+  write(examples, out, one_doc)
 
 
 if __name__ == '__main__':
   logging.basicConfig(format='%(asctime)s - %(module)s - %(levelname)s - %(message)s', level=logging.INFO)
   logging.info("Running %s", " ".join(sys.argv))
   out_path = sys.argv[1]
-  files = sys.argv[2:]
+  one_doc = bool(int(sys.argv[2]))
+  files = sys.argv[3:]
   files = [(file, int(limit)) for file, limit in zip(files[:-1:2], files[1::2])]
-  random_combine(files, out_path)
+  random_combine(files, out_path, one_doc)
   logging.info("Completed %s", " ".join(sys.argv))
