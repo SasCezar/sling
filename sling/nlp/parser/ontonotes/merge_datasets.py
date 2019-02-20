@@ -80,7 +80,8 @@ def random_combine(files, out, one_doc):
   print(files)
   for file, limit in files:
     ex = read_examples(file, limit)
-    assert len(ex) == limit, "{} - {}".format(len(ex), limit) if limit > 0 else None
+    if limit > 0:
+      assert len(ex) == limit, "{} - {}".format(len(ex), limit)
     examples.extend(ex)
 
   random.shuffle(examples)
