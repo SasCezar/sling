@@ -36,7 +36,7 @@ EXPERIMENTS = {
   },
 
   "es_conll_5000": {
-    "train": [("CoNLL2009-ST-Spanish-train.gold_conll", 2000)],
+    "train": [("CoNLL2009-ST-Spanish-train.gold_conll", 5000)],
     "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
     "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
   },
@@ -216,6 +216,12 @@ EXPERIMENTS = {
     "test": ["CoNLL2009-ST-German-trial.gold_conll"]
   },
 
+  "de_conll_5000": {
+    "train": [("CoNLL2009-ST-German-train.gold_conll", 5000)],
+    "dev": ["CoNLL2009-ST-German-development.gold_conll"],
+    "test": ["CoNLL2009-ST-German-trial.gold_conll"]
+  },
+
   "de_wiki_5000_conll_0": {
     "train": [("wiki_srl_de.gold_conll", 5000)],
     "dev": ["CoNLL2009-ST-German-development.gold_conll"],
@@ -387,6 +393,12 @@ EXPERIMENTS = {
 
   "en_conll_2000": {
     "train": [("CoNLL2009-ST-English-train.gold_conll", 2000)],
+    "dev": ["CoNLL2009-ST-English-development.gold_conll"],
+    "test": ["CoNLL2009-ST-English-trial.gold_conll"]
+  },
+
+  "en_conll_5000": {
+    "train": [("CoNLL2009-ST-English-train.gold_conll", 5000)],
     "dev": ["CoNLL2009-ST-English-development.gold_conll"],
     "test": ["CoNLL2009-ST-English-trial.gold_conll"]
   },
