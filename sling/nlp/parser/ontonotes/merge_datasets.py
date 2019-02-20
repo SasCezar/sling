@@ -57,7 +57,8 @@ def read_examples(file, limit):
     rows = [row.strip() for row in inf1 if not (row.startswith("#begin") or row.startswith("#end"))]
     examples = merge_doc_sentences(rows)
 
-  return examples[:limit]
+  res = examples[:limit] if limit > 0 else examples
+  return res
 
 
 def write(examples, out, one_doc_sentence=False):
@@ -79,7 +80,7 @@ def random_combine(files, out, one_doc):
   print(files)
   for file, limit in files:
     ex = read_examples(file, limit)
-    assert len(ex) == limit, "{} - {}".format(len(ex), limit)
+    assert len(ex) == limit, "{} - {}".format(len(ex), limit) if limit > 0 else None
     examples.extend(ex)
 
   random.shuffle(examples)

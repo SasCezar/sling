@@ -1,4 +1,16 @@
 EXPERIMENTS = {
+  "es_conll_full": {
+    "train": [("CoNLL2009-ST-Spanish-train.gold_conll", -1)],
+    "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
+    "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
+  },
+
+  "es_wiki_conll_full": {
+    "train": [("CoNLL2009-ST-Spanish-train.gold_conll", -1), ("wiki_srl_es.gold_conll", 14300)],
+    "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
+    "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
+  },
+
   "es_conll_100": {
     "train": [("CoNLL2009-ST-Spanish-train.gold_conll", 100)],
     "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
@@ -18,6 +30,12 @@ EXPERIMENTS = {
   },
 
   "es_conll_2000": {
+    "train": [("CoNLL2009-ST-Spanish-train.gold_conll", 2000)],
+    "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
+    "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
+  },
+
+  "es_conll_5000": {
     "train": [("CoNLL2009-ST-Spanish-train.gold_conll", 2000)],
     "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
     "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
@@ -160,6 +178,18 @@ EXPERIMENTS = {
               ("CoNLL2009-ST-Spanish-train.gold_conll", 2000)],
     "dev": ["CoNLL2009-ST-Spanish-development.gold_conll"],
     "test": ["CoNLL2009-ST-evaluation-Spanish.gold_conll"]
+  },
+
+  "de_conll_full": {
+    "train": [("CoNLL2009-ST-German-train.gold_conll", -1)],
+    "dev": ["CoNLL2009-ST-German-development.gold_conll"],
+    "test": ["CoNLL2009-ST-German-trial.gold_conll"]
+  },
+
+  "de_wiki_conll_full": {
+    "train": [("CoNLL2009-ST-German-train.gold_conll", -1), ("wiki_srl_es.gold_conll", -1)],
+    "dev": ["CoNLL2009-ST-German-development.gold_conll"],
+    "test": ["CoNLL2009-ST-German-trial.gold_conll"]
   },
 
   "de_conll_100": {
@@ -323,6 +353,18 @@ EXPERIMENTS = {
               ("CoNLL2009-ST-German-train.gold_conll", 2000)],
     "dev": ["CoNLL2009-ST-German-development.gold_conll"],
     "test": ["CoNLL2009-ST-German-trial.gold_conll"]
+  },
+
+  "en_conll_full": {
+    "train": [("CoNLL2009-ST-English-train.gold_conll", -1)],
+    "dev": ["CoNLL2009-ST-English-development.gold_conll"],
+    "test": ["CoNLL2009-ST-English-trial.gold_conll"]
+  },
+
+  "en_wiki_conll_full": {
+    "train": [("CoNLL2009-ST-English-train.gold_conll", -1), ("wiki_srl_en.gold_conll", 39000)],
+    "dev": ["CoNLL2009-ST-English-development.gold_conll"],
+    "test": ["CoNLL2009-ST-English-trial.gold_conll"]
   },
 
   "en_conll_100": {
