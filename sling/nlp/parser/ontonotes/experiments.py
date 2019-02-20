@@ -187,7 +187,7 @@ EXPERIMENTS = {
   },
 
   "de_wiki_conll_full": {
-    "train": [("CoNLL2009-ST-German-train.gold_conll", -1), ("wiki_srl_es.gold_conll", -1)],
+    "train": [("CoNLL2009-ST-German-train.gold_conll", -1), ("wiki_srl_de.gold_conll", -1)],
     "dev": ["CoNLL2009-ST-German-development.gold_conll"],
     "test": ["CoNLL2009-ST-German-trial.gold_conll"]
   },
