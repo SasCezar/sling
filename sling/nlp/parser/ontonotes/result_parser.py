@@ -44,28 +44,32 @@ def parse_file(log_file, experiment):
   return results, df_results, loss_ts
 
 
-def extract_results(in_path, out_path):
+def extract_results(in_path, out_path, typ):
   experiments = [d for d in os.listdir(in_path) if os.path.isdir(os.path.join(in_path, d))]
   all_results = []
   all_loss = []
   for experiment in experiments:
     log_file = os.path.join(*[in_path, experiment, "log"])
-    res, results, loss = parse_file(log_file, experiment)
+    try:
+      res, results, loss = parse_file(log_file, experiment)
+    except FileNotFoundError:
+      print(experiment)
+      continue
     all_results.extend(res)
     all_loss.extend(loss)
 
-    results.to_csv(os.path.join(out_path, experiment + "_scores.csv"), index=False)
+    results.to_csv(os.path.join(out_path, experiment + "_" + typ + "_scores.csv"), index=False)
 
-    with open(os.path.join(out_path, experiment + "_loss.csv"), "wt", encoding="utf8", newline="") as outf:
+    with open(os.path.join(out_path, experiment + "_" + typ + "_loss.csv"), "wt", encoding="utf8", newline="") as outf:
       writer = csv.writer(outf)
       writer.writerow(["Experiment Name", "N Batches", "N Examples", "Loss", "L2"])
       for l in loss:
         writer.writerow(l)
 
   all_results = DataFrame(all_results)
-  all_results.to_csv(os.path.join(out_path,  "scores_all.csv"), index=False)
+  all_results.to_csv(os.path.join(out_path, typ + "_scores_all.csv"), index=False)
 
-  with open(os.path.join(out_path, "loss_all.csv"), "wt", encoding="utf8", newline="") as outf:
+  with open(os.path.join(out_path, typ + "_loss_all.csv"), "wt", encoding="utf8", newline="") as outf:
     writer = csv.writer(outf)
     writer.writerow(["Experiment Name", "N Batches", "N Examples", "Loss", "L2"])
     for l in all_loss:
@@ -76,7 +80,8 @@ if __name__ == '__main__':
   logging.info("Running %s", " ".join(sys.argv))
   in_path = sys.argv[1]
   out_path = sys.argv[2]
+  typ = sys.argv[3]
 
-  extract_results(in_path, out_path)
+  extract_results(in_path, out_path, typ)
 
   logging.info("Completed %s", " ".join(sys.argv))
