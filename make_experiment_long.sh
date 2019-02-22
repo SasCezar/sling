@@ -25,4 +25,5 @@ pwd
     --output=$4/$3/ \
     --word_embeddings=./local/data/corpora/sempar/wiki.multi.vec \
     --batch 8 \
-    --report_every 1000
+    --report_every 1000 \
+    --steps 150000
