@@ -26,7 +26,7 @@ echo "Convert CoNLL files to SLING"
 
 CONVERTER=sling/nlp/parser/ontonotes/ontonotesv5_to_sling.py
 IN=$ONTONOTES/data
-OUT=local/data/corpora/caspar/$2
+OUT=local/data/corpora/caspar/$3/$2
 
 mkdir -p $OUT
 

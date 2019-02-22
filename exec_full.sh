@@ -7,5 +7,5 @@
 #SBATCH --time=6-00:00:00
 #SBATCH --mem=16GB
 
-./make_experiment.sh ~/datasets_full/ ~/experiments_full/ $1 ~/experiments_full/results/
+./make_experiment.sh ~/datasets_full/ ~/experiments_full/ $1 ~/experiments_full/results/ full
 
