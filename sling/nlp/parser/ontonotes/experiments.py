@@ -367,6 +367,12 @@ EXPERIMENTS = {
     "test": ["CoNLL2009-ST-English-evaluation.gold_conll"]
   },
 
+  "en_conll_full_v2": {
+    "train": [("CoNLL2009-ST-English-train.gold_conll", -1)],
+    "dev": ["CoNLL2009-ST-English-development.gold_conll"],
+    "test": ["CoNLL2009-ST-English-evaluation.gold_conll"]
+  },
+
   "en_wiki_conll_full": {
     "train": [("CoNLL2009-ST-English-train.gold_conll", -1), ("wiki_srl_en.gold_conll", 39000)],
     "dev": ["CoNLL2009-ST-English-development.gold_conll"],
