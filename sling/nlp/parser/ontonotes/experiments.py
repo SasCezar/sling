@@ -527,6 +527,13 @@ EXPERIMENTS = {
     "test": ["CoNLL2009-ST-English-evaluation.gold_conll"]
   },
 
+  "de-en_wiki_5000_conll_5000-2000_v2": {
+    "train": [("wiki_srl_en.gold_conll", 5000), ("wiki_srl_de.gold_conll", 5000),
+              ("CoNLL2009-ST-German-train.gold_conll", 5000), ("CoNLL2009-ST-English-train.gold_conll", 2000)],
+    "dev": ["CoNLL2009-ST-English-development.gold_conll"],
+    "test": ["CoNLL2009-ST-English-evaluation.gold_conll"]
+  },
+
   "es-de-en_wiki_5000_conll_5000-5000-0": {
     "train": [("wiki_srl_de.gold_conll", 5000), ("wiki_srl_en.gold_conll", 5000), ("wiki_srl_es.gold_conll", 5000),
               ("CoNLL2009-ST-German-train.gold_conll", 5000), ("CoNLL2009-ST-Spanish-train.gold_conll", 5000)],
