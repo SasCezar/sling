@@ -571,5 +571,11 @@ EXPERIMENTS = {
               ("CoNLL2009-ST-English-train.gold_conll", 2000)],
     "dev": ["CoNLL2009-ST-German-development.gold_conll"],
     "test": ["CoNLL2009-ST-evaluation-German.gold_conll"]
+  },
+
+  "crash_test": {
+      "train": [("wiki_srl_de.gold_conll", 100)],
+      "dev": ["CoNLL2009-ST-evaluation-German.gold_conll"],
+      "test": ["CoNLL2009-ST-evaluation-German.gold_conll"]
   }
 }
